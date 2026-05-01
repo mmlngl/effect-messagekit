@@ -17,10 +17,11 @@
 	"license": "MIT",
 	"scripts": {
 		"build": "tsup",
-		"test": "vitest run",
-		"typecheck": "tsc --noEmit",
+		"clean": "rm -rf dist coverage",
 		"dev": "tsup --watch",
-		"clean": "rm -rf dist coverage"
+		"test": "vitest run",
+		"test:coverage": "vitest run --coverage",
+		"typecheck": "tsc --noEmit"
 	},
 	"peerDependencies": {
 		"effect": "^3.21.0"
