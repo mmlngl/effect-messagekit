@@ -31,7 +31,10 @@ export class InboundMessage extends Schema.TaggedClass<InboundMessage>(
     title: "Inbound Message",
     description: "An Inbound Message",
   },
-) {}
+) {
+  static decodeSingle = (input: Omit<InboundMessage.Encoded, "_tag">) =>
+    Schema.decode(this)({ _tag: "InboundMessage", ...input });
+}
 
 export declare namespace InboundMessage {
   export type Type = typeof InboundMessage.Type;
@@ -61,7 +64,10 @@ export class OutboundMessage extends Schema.TaggedClass<OutboundMessage>(
     title: "Outbound Message",
     description: "An Outbound Message",
   },
-) {}
+) {
+  static decodeSingle = (input: Omit<OutboundMessage.Encoded, "_tag">) =>
+    Schema.decode(this)({ _tag: "OutboundMessage", ...input });
+}
 
 export declare namespace OutboundMessage {
   export type Type = typeof OutboundMessage.Type;
