@@ -1,1 +1,2 @@
-console.log("yo");
+export * as Application from "./application";
+export * as Domain from "./domain";
