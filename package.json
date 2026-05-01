@@ -11,9 +11,11 @@
 	"license": "MIT",
 	"packageManager": "pnpm@10.15.0",
 	"devDependencies": {
+		"@biomejs/biome": "2.4.13",
 		"@effect/vitest": "^0.29.0",
 		"@types/node": "^25.6.0",
 		"@vitest/coverage-v8": "^4.1.5",
+		"lefthook": "^2.1.6",
 		"tsup": "^8.5.1",
 		"turbo": "^2.9.7",
 		"typescript": "^6.0.3",
