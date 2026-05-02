@@ -8,4 +8,4 @@ export const ProviderIdentifier = Schema.Literal("LINE", "WHATSAPP").pipe(
   }),
 );
 
-export type ProviderIdentifier = typeof ProviderIdentifier.Type;
+export type ProviderIdentifierType = typeof ProviderIdentifier.Type;

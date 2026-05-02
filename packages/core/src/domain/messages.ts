@@ -1,7 +1,8 @@
 import * as Schema from "effect/Schema";
 import * as Providers from "./provider";
+import * as Users from "./user";
 
-export const MessageIdentifier = Schema.NonEmptyTrimmedString.pipe(
+export const MessageIdentifier = Schema.UUID.pipe(
   Schema.brand("MessageIdentifier"),
   Schema.annotations({
     title: "Message Identifier",
@@ -32,14 +33,12 @@ export class InboundMessage extends Schema.TaggedClass<InboundMessage>(
     description: "An Inbound Message",
   },
 ) {
-  static decodeSingle = (input: Omit<InboundMessage.Encoded, "_tag">) =>
+  static decodeSingle = (input: Omit<InboundMessageEncoded, "_tag">) =>
     Schema.decode(this)({ _tag: "InboundMessage", ...input });
 }
 
-export declare namespace InboundMessage {
-  export type Type = typeof InboundMessage.Type;
-  export type Encoded = Schema.Schema.Encoded<typeof InboundMessage>;
-}
+export type InboundMessageType = typeof InboundMessage.Type;
+export type InboundMessageEncoded = typeof InboundMessage.Encoded;
 
 export class OutboundMessage extends Schema.TaggedClass<OutboundMessage>(
   "OutboundMessage",
@@ -59,20 +58,21 @@ export class OutboundMessage extends Schema.TaggedClass<OutboundMessage>(
         description: "The provider to send this message",
       }),
     ),
+    recipient: Users.UserIdentifier.pipe(
+      Schema.annotations({
+        title: "Recipient",
+        description: "The user that will receive this message",
+      }),
+    ),
   },
   {
     title: "Outbound Message",
     description: "An Outbound Message",
   },
-) {
-  static decodeSingle = (input: Omit<OutboundMessage.Encoded, "_tag">) =>
-    Schema.decode(this)({ _tag: "OutboundMessage", ...input });
-}
+) {}
 
-export declare namespace OutboundMessage {
-  export type Type = typeof OutboundMessage.Type;
-  export type Encoded = Schema.Schema.Encoded<typeof OutboundMessage>;
-}
+export type OutboundMessageType = typeof OutboundMessage.Type;
+export type OutboundMessageEncoded = typeof OutboundMessage.Type;
 
-export const AnyMessage = Schema.Union(InboundMessage, OutboundMessage);
-export type AnyMessage = typeof AnyMessage.Type;
+export const AnyOutboundMessage = Schema.Union(OutboundMessage);
+export type AnyOutboundMessage = typeof AnyOutboundMessage.Type;

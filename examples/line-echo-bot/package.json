@@ -10,6 +10,7 @@
   "license": "MIT",
   "packageManager": "pnpm@10.15.0",
   "dependencies": {
+    "@effect-messagekit/core": "workspace:^",
     "@effect/platform": "^0.96.1",
     "@effect/platform-node": "^0.106.0",
     "effect": "^3.21.0"
