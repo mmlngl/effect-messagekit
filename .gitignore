@@ -66,3 +66,7 @@ temp/
 # Misc
 .local/
 .turbo
+
+# Global Skills
+*/skills/grill-me
+*/skills/tdd
