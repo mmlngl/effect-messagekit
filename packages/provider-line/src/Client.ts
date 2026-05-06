@@ -26,13 +26,28 @@ export class LineClient extends Context.Tag("LineClient")<
       const verifyToken: LineClientTrait["verifyToken"] = Effect.fn(
         "line.verifyToken",
       )(function* (body, token) {
-        return yield* Effect.try(() =>
-          validateSignature(
-            body,
-            Redacted.value(config.channelSecret),
-            Redacted.value(token),
-          ),
-        ).pipe(Effect.catchAll(() => Effect.succeed(false)));
+        const result = yield* Effect.if(
+          config.dangerouslySkipSignatureVerification,
+          {
+            onTrue: () =>
+              Effect.succeed(true).pipe(
+                Effect.tap(() =>
+                  Effect.logWarning(
+                    "dangerouslySkipSignatureVerification is enabled, skipping signature verification",
+                  ),
+                ),
+              ),
+            onFalse: () =>
+              Effect.try(() =>
+                validateSignature(
+                  body,
+                  Redacted.value(config.channelSecret),
+                  Redacted.value(token),
+                ),
+              ).pipe(Effect.catchAll(() => Effect.succeed(false))),
+          },
+        );
+        return result;
       });
 
       const presentMessages: LineClientTrait["presentMessages"] = Effect.fn(

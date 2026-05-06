@@ -23,22 +23,26 @@ export class LineWebhookAuthorization extends P.HttpApiMiddleware.Tag<LineWebhoo
       return {
         signature: (token) =>
           Effect.gen(function* () {
-            const request = yield* P.HttpServerRequest.HttpServerRequest;
-            const body = yield* request.text;
-            return client
-              .verifyToken(body, token)
-              .pipe(
-                Effect.flatMap((result) =>
-                  result
-                    ? Effect.succeed(true)
-                    : Effect.fail(new Error("Invalid token")),
-                ),
-              );
-          }).pipe(
-            Effect.mapError(
-              (cause) => new Errors.LineSignatureError({ cause }),
-            ),
-          ),
+            const body = yield* P.HttpServerRequest.HttpServerRequest.pipe(
+              Effect.flatMap((request) => request.text),
+              Effect.mapError(
+                (cause) => new Errors.LineSignatureError({ cause }),
+              ),
+            );
+
+            return yield* client.verifyToken(body, token).pipe(
+              Effect.tap((isValid) => Effect.log(`isValid: ${isValid}`)),
+              Effect.flatMap((isValid) =>
+                Effect.if(isValid, {
+                  onTrue: () => Effect.succeed(void 0),
+                  onFalse: () =>
+                    Effect.fail(
+                      new Errors.LineSignatureError({ cause: "Invalid token" }),
+                    ),
+                }),
+              ),
+            );
+          }),
       };
     }),
   );

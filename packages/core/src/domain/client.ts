@@ -10,7 +10,7 @@ export interface ClientTrait<T> {
   ): Effect.Effect<readonly T[], Presenter.PresentBuildError>;
 
   verifyToken(
-    body: string,
+    body: string | ArrayBuffer,
     token: Redacted.Redacted<string>,
   ): Effect.Effect<boolean>;
 }
