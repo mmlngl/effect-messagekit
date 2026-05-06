@@ -1,6 +1,6 @@
 import * as P from "@effect/platform";
-import * as Core from "@effect-messagekit/core";
-import * as Line from "@effect-messagekit/provider-line";
+import * as Core from "@mmlngl/effect-messagekit-core";
+import * as Line from "@mmlngl/effect-messagekit-provider-line";
 import * as Effect from "effect/Effect";
 import * as Schema from "effect/Schema";
 import * as Api from "./Api";

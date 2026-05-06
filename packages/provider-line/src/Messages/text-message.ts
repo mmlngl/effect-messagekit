@@ -1,5 +1,5 @@
-import * as Core from "@effect-messagekit/core";
 import type * as Line from "@line/bot-sdk";
+import * as Core from "@mmlngl/effect-messagekit-core";
 import * as Effect from "effect/Effect";
 import * as Schema from "effect/Schema";
 import * as Common from "./common";

@@ -10,13 +10,13 @@ Get a LINE bot running in under 5 minutes.
 
 ```bash
 # pnpm
-pnpm add @effect-messagekit/provider-line effect
+pnpm add @mmlngl/effect-messagekit-provider-line effect
 
 # npm
-npm install @effect-messagekit/provider-line effect
+npm install @mmlngl/effect-messagekit-provider-line effect
 
 # yarn
-yarn add @effect-messagekit/provider-line effect
+yarn add @mmlngl/effect-messagekit-provider-line effect
 ```
 
 ## LINE Channel Setup
@@ -35,7 +35,7 @@ Create `src/main.ts`:
 import { createServer } from "node:http";
 import * as P from "@effect/platform";
 import * as N from "@effect/platform-node";
-import * as Line from "@effect-messagekit/provider-line";
+import * as Line from "@mmlngl/effect-messagekit-provider-line";
 import * as Layer from "effect/Layer";
 import * as Effect from "effect/Effect";
 import * as Match from "effect/Match";
@@ -59,33 +59,31 @@ const handleWebhook = P.HttpApiBuilder.group(
                   replyToken: e.replyToken,
                   messages: [{ type: "text", text: `Echo: ${e.message.text}` }],
                 });
-              })
+              }),
             ),
-            Match.orElse(() => Effect.void)
+            Match.orElse(() => Effect.void),
           );
         }
 
         return { status: "ok" };
-      })
-    )
+      }),
+    ),
 );
 
 // Configure layers
 const lineClientLayer = Line.Client.LineClient.layer.pipe(
-  Layer.provide(Line.Config.LineConfig.layerFromEnv)
+  Layer.provide(Line.Config.LineConfig.layerFromEnv),
 );
 
-const apiLayer = P.HttpApiBuilder.api(
-  P.HttpApi.make("MessageKitApi")
-).pipe(
+const apiLayer = P.HttpApiBuilder.api(P.HttpApi.make("MessageKitApi")).pipe(
   Layer.provide(handleWebhook),
-  Layer.provide(lineClientLayer)
+  Layer.provide(lineClientLayer),
 );
 
 const httpLive = P.HttpApiBuilder.serve(P.HttpMiddleware.logger).pipe(
   Layer.provide(apiLayer),
   P.HttpServer.withLogAddress,
-  Layer.provide(N.NodeHttpServer.layer(createServer, { port: 8787 }))
+  Layer.provide(N.NodeHttpServer.layer(createServer, { port: 8787 })),
 );
 
 N.NodeRuntime.runMain(Layer.launch(httpLive));
@@ -154,6 +152,7 @@ cloudflared tunnel --url http://localhost:8787
 ## Next Steps
 
 Explore the [LINE Cookbook](./line/echo-bot.md) for patterns:
+
 - Error handling and retries
 - Testing with mocks
 - Multi-handler routing

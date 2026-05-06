@@ -1,0 +1,17 @@
+# @mmlngl/effect-messagekit-provider-line
+
+## 0.0.1
+
+### Patch Changes
+
+- initial release v0.0.1
+- Updated dependencies
+  - @mmlngl/effect-messagekit-core@0.0.1
+
+## 0.0.1
+
+### Patch Changes
+
+- initial partial release
+- Updated dependencies
+  - @mmlngl/effect-messagekit-core@0.0.1

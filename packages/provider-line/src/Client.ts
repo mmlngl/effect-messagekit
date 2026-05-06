@@ -1,5 +1,5 @@
-import { Domain, Infra } from "@effect-messagekit/core";
 import { LineBotClient, validateSignature } from "@line/bot-sdk";
+import { Domain, Infra } from "@mmlngl/effect-messagekit-core";
 import * as Context from "effect/Context";
 import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";

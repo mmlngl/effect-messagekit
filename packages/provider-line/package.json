@@ -1,6 +1,6 @@
 {
-  "name": "@effect-messagekit/provider-line",
-  "version": "0.0.0",
+  "name": "@mmlngl/effect-messagekit-provider-line",
+  "version": "0.0.1",
   "type": "module",
   "sideEffects": false,
   "files": [
@@ -16,6 +16,11 @@
   "types": "./dist/index.d.ts",
   "main": "./dist/index.js",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mmlngl/effect-messagekit.git",
+    "directory": "packages/provider-line"
+  },
   "scripts": {
     "build": "tsup",
     "check": "biome check .",
@@ -29,7 +34,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@effect-messagekit/core": "workspace:^",
+    "@mmlngl/effect-messagekit-core": "workspace:^",
     "@line/bot-sdk": "^11.0.0"
   },
   "peerDependencies": {
@@ -42,5 +47,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "engines": {
+    "node": ">=20.0"
   }
 }

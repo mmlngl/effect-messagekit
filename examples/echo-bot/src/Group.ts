@@ -1,5 +1,5 @@
 import * as P from "@effect/platform";
-import * as Line from "@effect-messagekit/provider-line";
+import * as Line from "@mmlngl/effect-messagekit-provider-line";
 import * as Schema from "effect/Schema";
 
 export const Payload = Schema.Struct({

@@ -1,6 +1,6 @@
 {
-  "name": "@effect-messagekit/core",
-  "version": "0.0.0",
+  "name": "@mmlngl/effect-messagekit-core",
+  "version": "0.0.1",
   "type": "module",
   "sideEffects": false,
   "files": [
@@ -16,6 +16,11 @@
   "types": "./dist/index.d.ts",
   "main": "./dist/index.js",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mmlngl/effect-messagekit.git",
+    "directory": "packages/core"
+  },
   "scripts": {
     "build": "tsup",
     "check": "biome check .",
@@ -40,5 +45,8 @@
   },
   "dependencies": {
     "@typed/id": "^0.17.2"
+  },
+  "engines": {
+    "node": ">=20.0"
   }
 }

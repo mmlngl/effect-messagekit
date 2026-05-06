@@ -1,6 +1,7 @@
 {
   "name": "echo-bot",
   "version": "1.0.0",
+  "private": true,
   "description": "",
   "scripts": {
     "dev": "tsx watch src/main.ts"
@@ -11,8 +12,8 @@
   "packageManager": "pnpm@10.15.0",
   "dependencies": {
     "@dotenvx/dotenvx": "^1.65.0",
-    "@effect-messagekit/core": "workspace:^",
-    "@effect-messagekit/provider-line": "workspace:^",
+    "@mmlngl/effect-messagekit-core": "workspace:^",
+    "@mmlngl/effect-messagekit-provider-line": "workspace:^",
     "@effect/platform": "^0.96.1",
     "@effect/platform-node": "^0.106.0",
     "effect": "^3.21.0"

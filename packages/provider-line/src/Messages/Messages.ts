@@ -1,4 +1,4 @@
-import { Domain } from "@effect-messagekit/core";
+import { Domain } from "@mmlngl/effect-messagekit-core";
 import * as Schema from "effect/Schema";
 import * as FlexMessage from "./flex-message";
 import * as ImageMessage from "./image-message";
