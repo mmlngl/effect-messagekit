@@ -29,9 +29,7 @@ export class LineWebhookAuthorization extends P.HttpApiMiddleware.Tag<LineWebhoo
                 (cause) => new Errors.LineSignatureError({ cause }),
               ),
             );
-
             return yield* client.verifyToken(body, token).pipe(
-              Effect.tap((isValid) => Effect.log(`isValid: ${isValid}`)),
               Effect.flatMap((isValid) =>
                 Effect.if(isValid, {
                   onTrue: () => Effect.succeed(void 0),

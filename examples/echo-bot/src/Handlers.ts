@@ -20,8 +20,6 @@ export const EchoGroupHandlers = P.HttpApiBuilder.group(
           Effect.mapError((cause) => cause.toString()),
         );
 
-        yield* Effect.log(body);
-
         const presenter = Line.Messages.TextMessage.presenter;
         const client = yield* Line.Client.LineClient;
 
@@ -37,9 +35,10 @@ export const EchoGroupHandlers = P.HttpApiBuilder.group(
           timestamp: new Date(),
         });
 
-        yield* client
-          .presentMessages([dummyMessage], presenter)
-          .pipe(Effect.mapError((cause) => cause.toString()));
+        yield* client.presentMessages([dummyMessage], presenter).pipe(
+          Effect.tap(() => Effect.log("messages presented")),
+          Effect.mapError((cause) => cause.toString()),
+        );
 
         return Payload.make({
           msg: payload.msg,

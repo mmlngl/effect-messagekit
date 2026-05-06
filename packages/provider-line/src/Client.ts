@@ -24,7 +24,7 @@ export class LineClient extends Context.Tag("LineClient")<
       });
 
       const verifyToken: LineClientTrait["verifyToken"] = Effect.fn(
-        "line.verifyToken",
+        "line-client.verifyToken",
       )(function* (body, token) {
         const result = yield* Effect.if(
           config.dangerouslySkipSignatureVerification,
@@ -51,7 +51,7 @@ export class LineClient extends Context.Tag("LineClient")<
       });
 
       const presentMessages: LineClientTrait["presentMessages"] = Effect.fn(
-        "line.presentMessages",
+        "line-client.presentMessages",
       )(function* (messages, presenter) {
         const lineMessages = yield* presenter.build(messages);
 
@@ -65,11 +65,11 @@ export class LineClient extends Context.Tag("LineClient")<
           grouped.get(to)!.push(msg);
         }
 
-        yield* Effect.forEach(
+        const resp = yield* Effect.forEach(
           grouped.entries(),
           Effect.fnUntraced(function* ([to, messages]) {
             const retryKey = yield* Uuid.next;
-            return Effect.tryPromise({
+            return yield* Effect.tryPromise({
               try: () =>
                 client.pushMessage(
                   {
@@ -86,6 +86,8 @@ export class LineClient extends Context.Tag("LineClient")<
             concurrency: "inherit",
           },
         );
+
+        yield* Effect.log(`resp: ${resp}`);
 
         return lineMessages;
       });
