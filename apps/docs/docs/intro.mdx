@@ -2,46 +2,48 @@
 sidebar_position: 1
 ---
 
-# Tutorial Intro
+# Introduction
 
-Let's discover **Docusaurus in less than 5 minutes**.
+Effect MessageKit is an Effect-native library for building type-safe messaging platform integrations (LINE, WhatsApp, Slack).
 
-## Getting Started
+## Problem
 
-Get started by **creating a new site**.
+Building bots for messaging platforms requires repetitive boilerplate:
+- Webhook signature validation
+- Cryptic API error messages (`{"message": "Bad Request"}`)
+- Manual retry logic for rate limits
+- No observability/tracing
+- Official SDKs use Promises/throws, incompatible with Effect
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
+## Solution
 
-### What you'll need
+MessageKit wraps platform SDKs with:
+- **Tagged errors** via Effect Schema (API errors, rate limits, signature failures)
+- **Auto-retry** with configurable exponential backoff
+- **Distributed tracing** via Effect Tracer
+- **Type-safe Services** for testability
+- **Unified interface** across platforms (LINE, WhatsApp, etc.)
 
-- [Node.js](https://nodejs.org/en/download/) version 20.0 or above:
-  - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
+## Quick Example
 
-## Generate a new site
+```typescript
+import { Handler } from "@effect-messagekit/provider-line"
+import { Match } from "effect"
 
-Generate a new Docusaurus site using the **classic template**.
-
-The classic template will automatically be added to your project after you run the command:
-
-```bash
-npm init docusaurus@latest my-website classic
+const program = Handler.run({
+  request: webhookRequest,
+  onEvent: (event) => Match.value(event).pipe(
+    Match.tag("TextMessage", (msg) =>
+      presentMessage({ type: "text", text: `Echo: ${msg.text}` })
+    ),
+    Match.tag("FollowEvent", () =>
+      presentMessage({ type: "text", text: "Thanks for following!" })
+    ),
+    Match.exhaustive
+  )
+})
 ```
 
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
+## Next Steps
 
-The command also installs all necessary dependencies you need to run Docusaurus.
-
-## Start your site
-
-Run the development server:
-
-```bash
-cd my-website
-npm run start
-```
-
-The `cd` command changes the directory you're working with. In order to work with your newly created Docusaurus site, you'll need to navigate the terminal there.
-
-The `npm run start` command builds your website locally and serves it through a development server, ready for you to view at http://localhost:3000/.
-
-Open `docs/intro.md` (this page) and edit some lines: the site **reloads automatically** and displays your changes.
+Explore the **LINE Cookbook** for practical patterns and examples.
