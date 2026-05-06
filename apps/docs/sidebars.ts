@@ -15,6 +15,7 @@ import type { SidebarsConfig } from "@docusaurus/plugin-content-docs";
 const sidebars: SidebarsConfig = {
   tutorialSidebar: [
     "intro",
+    "quick-start",
     {
       type: "category",
       label: "LINE Cookbook",
