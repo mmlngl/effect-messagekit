@@ -85,6 +85,10 @@
     "initial_value": "core",
     "options": [
       {
+        "value": "docs",
+        "label": "docs"
+      },
+      {
         "value": "examples",
         "label": "examples"
       },
