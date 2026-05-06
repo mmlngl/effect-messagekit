@@ -1,16 +1,8 @@
+import * as Core from "@effect-messagekit/core";
 import type * as Line from "@line/bot-sdk";
+import * as Effect from "effect/Effect";
 import * as Schema from "effect/Schema";
 import * as Common from "./common";
-
-// ***************
-// INBOUND
-// ***************
-
-// Code here…
-
-// ***************
-// OUTBOUND
-// ***************
 
 export const LineImageMessage = Schema.TaggedStruct("LineImageMessage", {
   ...Common.fields,
@@ -22,6 +14,23 @@ export const LineImageMessage = Schema.TaggedStruct("LineImageMessage", {
 export type LineImageMessageType = typeof LineImageMessage.Type;
 
 // Compile-time type checks to ensure compatibility with LINE SDK
-// These will cause build failures if types don't match
-const _assertImageMessage: Line.messagingApi.ImageMessage =
-  {} as LineImageMessageType;
+const _assert: Line.messagingApi.ImageMessage = {} as LineImageMessageType;
+
+export const presenter: Core.Domain.Presenter.PresenterTrait<LineImageMessageType> =
+  {
+    build: (messages) =>
+      Effect.all(
+        messages.map((msg) =>
+          Schema.decodeUnknown(LineImageMessage)({
+            type: "image",
+            to: msg.recipient,
+            originalContentUrl: "https://example.com/image.jpg",
+            previewImageUrl: "https://example.com/preview.jpg",
+          }),
+        ),
+      ).pipe(
+        Effect.mapError(
+          (cause) => new Core.Domain.Presenter.PresentBuildError({ cause }),
+        ),
+      ),
+  };

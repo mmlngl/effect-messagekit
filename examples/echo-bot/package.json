@@ -1,5 +1,5 @@
 {
-  "name": "line-echo-bot",
+  "name": "echo-bot",
   "version": "1.0.0",
   "description": "",
   "scripts": {
@@ -10,7 +10,9 @@
   "license": "MIT",
   "packageManager": "pnpm@10.15.0",
   "dependencies": {
+    "@dotenvx/dotenvx": "^1.65.0",
     "@effect-messagekit/core": "workspace:^",
+    "@effect-messagekit/provider-line": "workspace:^",
     "@effect/platform": "^0.96.1",
     "@effect/platform-node": "^0.106.0",
     "effect": "^3.21.0"

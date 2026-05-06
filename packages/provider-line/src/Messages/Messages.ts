@@ -1,5 +1,6 @@
 import { Domain } from "@effect-messagekit/core";
 import * as Schema from "effect/Schema";
+import * as FlexMessage from "./flex-message";
 import * as ImageMessage from "./image-message";
 import * as TextMessage from "./text-message";
 
@@ -14,8 +15,9 @@ import * as TextMessage from "./text-message";
 // ***************
 
 export const AnyLineMessage = Schema.Union(
-  TextMessage.LineTextMessage,
+  FlexMessage.LineFlexMessage,
   ImageMessage.LineImageMessage,
+  TextMessage.LineTextMessage,
 );
 export type AnyLineMessageType = typeof AnyLineMessage.Type;
 

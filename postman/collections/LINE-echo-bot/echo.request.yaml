@@ -1,0 +1,11 @@
+$kind: http-request
+name: echo
+url: http://localhost:8787/echo/line
+method: POST
+body:
+  type: json
+  content: |-
+    {
+        "msg": "hello3"
+    }
+order: 1778059938126

@@ -1,16 +1,8 @@
+import * as Core from "@effect-messagekit/core";
 import type * as Line from "@line/bot-sdk";
+import * as Effect from "effect/Effect";
 import * as Schema from "effect/Schema";
 import * as Common from "./common";
-
-// ***************
-// INBOUND
-// ***************
-
-// Code here…
-
-// ***************
-// OUTBOUND
-// ***************
 
 export const LineTextMessage = Schema.TaggedStruct("LineTextMessage", {
   ...Common.fields,
@@ -23,6 +15,23 @@ export const LineTextMessage = Schema.TaggedStruct("LineTextMessage", {
 export type LineTextMessageType = typeof LineTextMessage.Type;
 
 // Compile-time type checks to ensure compatibility with LINE SDK
-// These will cause build failures if types don't match
-const _assertTextMessage: Line.messagingApi.TextMessage =
-  {} as LineTextMessageType;
+const _assert: Line.messagingApi.TextMessage = {} as LineTextMessageType;
+
+export const presenter: Core.Domain.Presenter.PresenterTrait<LineTextMessageType> =
+  {
+    build: (messages) =>
+      Effect.all(
+        messages.map((msg) =>
+          Schema.decodeUnknown(LineTextMessage)({
+            _tag: "LineTextMessage",
+            type: "text",
+            to: msg.recipient,
+            text: "Fake content",
+          }),
+        ),
+      ).pipe(
+        Effect.mapError(
+          (cause) => new Core.Domain.Presenter.PresentBuildError({ cause }),
+        ),
+      ),
+  };

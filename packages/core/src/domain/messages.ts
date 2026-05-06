@@ -1,3 +1,4 @@
+import * as ParseResult from "effect/ParseResult";
 import * as Schema from "effect/Schema";
 import * as Providers from "./provider";
 import * as Users from "./user";
@@ -76,3 +77,19 @@ export type OutboundMessageEncoded = typeof OutboundMessage.Type;
 
 export const AnyOutboundMessage = Schema.Union(OutboundMessage);
 export type AnyOutboundMessage = typeof AnyOutboundMessage.Type;
+
+// biome-ignore lint/suspicious/noExplicitAny: fixes inference
+export const makeMessageAdapter = <O extends Schema.Schema<any>>(
+  to: O,
+  decode: (
+    messages: ReadonlyArray<OutboundMessageType>,
+  ) => ReadonlyArray<typeof to.Type>,
+) =>
+  Schema.transformOrFail(Schema.Array(OutboundMessage), Schema.Array(to), {
+    strict: true,
+    decode: (messages) => ParseResult.succeed(decode(messages)),
+    encode: (output, _, ast) =>
+      ParseResult.fail(
+        new ParseResult.Forbidden(ast, output, "Encoding is forbidden."),
+      ),
+  });

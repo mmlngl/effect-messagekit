@@ -1,8 +1,16 @@
 import type * as Effect from "effect/Effect";
+import type * as Redacted from "effect/Redacted";
 import type * as Messages from "./messages";
+import type * as Presenter from "./presenter";
 
-export interface ClientTrait<E = never, R = never> {
-  presentMessage(
-    message: Messages.OutboundMessageType,
-  ): Effect.Effect<void, E, R>;
+export interface ClientTrait<T> {
+  presentMessages(
+    messages: readonly Messages.OutboundMessageType[],
+    presenter: Presenter.PresenterTrait<T>,
+  ): Effect.Effect<readonly T[], Presenter.PresentBuildError>;
+
+  verifyToken(
+    body: string,
+    token: Redacted.Redacted<string>,
+  ): Effect.Effect<boolean>;
 }

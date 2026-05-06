@@ -9,7 +9,8 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
     }
   },
   "types": "./dist/index.d.ts",
@@ -32,9 +33,11 @@
     "@line/bot-sdk": "^11.0.0"
   },
   "peerDependencies": {
+    "@effect/platform": "^0.96.1",
     "effect": "^3.21.0"
   },
   "devDependencies": {
+    "@effect/platform": "^0.96.1",
     "effect": "^3.21.0"
   },
   "publishConfig": {

@@ -11,10 +11,10 @@ export interface LineConfigTrait {
 
 export const make = Effect.gen(function* () {
   const LINE_CHANNEL_ACCESS_TOKEN = yield* Config.redacted(
-    "CHANNEL_ACCESS_TOKEN",
+    "LINE_CHANNEL_ACCESS_TOKEN",
   );
 
-  const LINE_CHANNEL_SECRET = yield* Config.redacted("CHANNEL_SECRET");
+  const LINE_CHANNEL_SECRET = yield* Config.redacted("LINE_CHANNEL_SECRET");
 
   return {
     channelAccessToken: LINE_CHANNEL_ACCESS_TOKEN,
