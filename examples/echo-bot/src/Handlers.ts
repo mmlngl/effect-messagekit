@@ -27,7 +27,7 @@ export const EchoGroupHandlers = P.HttpApiBuilder.group(
           const client = yield* Line.Client.LineClient;
 
           const messages = [
-            Line.Messages.TextMessage.LineTextMessage.make({
+            Line.Messages.TextMessage.make({
               type: "text",
               text: payload.msg,
             }),
@@ -54,7 +54,7 @@ export const EchoGroupHandlers = P.HttpApiBuilder.group(
           const client = yield* Console.Client.ConsoleClient;
 
           const messages = [
-            Console.Messages.JsonMessage.ConsoleJsonMessage.make({
+            Console.Messages.JsonMessage.make({
               contents: payload.msg,
             }),
           ];

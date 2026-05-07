@@ -1,13 +1,10 @@
 import * as Schema from "effect/Schema";
-import { ConsoleJsonMessage } from "./json-message";
-import { ConsoleMarkdownMessage } from "./markdown-message";
+import { JsonMessage } from "./json-message";
+import { MarkdownMessage } from "./markdown-message";
 
-export const AnyConsoleMessage = Schema.Union(
-  ConsoleJsonMessage,
-  ConsoleMarkdownMessage,
-);
+export const AnyConsoleMessage = Schema.Union(JsonMessage, MarkdownMessage);
 
 export type AnyConsoleMessage = typeof AnyConsoleMessage.Type;
 
-export * as JsonMessage from "./json-message";
-export * as MarkdownMessage from "./markdown-message";
+export * from "./json-message";
+export * from "./markdown-message";

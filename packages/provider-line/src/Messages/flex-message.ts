@@ -1,7 +1,7 @@
 import type * as Line from "@line/bot-sdk";
 import * as Schema from "effect/Schema";
 
-export const LineFlexMessageContainerBubble = Schema.Struct({
+export const FlexMessageContainerBubble = Schema.Struct({
   type: Schema.Literal("bubble"),
   direction: Schema.optionalWith(Schema.Literal("ltr", "rtl"), {
     exact: true,
@@ -15,23 +15,23 @@ export const LineFlexMessageContainerBubble = Schema.Struct({
   // action?: Action
 });
 
-export const LineFlexMessageContainerCarousel = Schema.Struct({
+export const FlexMessageContainerCarousel = Schema.Struct({
   type: Schema.Literal("carousel"),
-  contents: Schema.mutable(Schema.Array(LineFlexMessageContainerBubble)),
+  contents: Schema.mutable(Schema.Array(FlexMessageContainerBubble)),
 });
 
-export const LineFlexMessageContainer = Schema.Union(
-  LineFlexMessageContainerBubble,
-  LineFlexMessageContainerCarousel,
+export const FlexMessageContainer = Schema.Union(
+  FlexMessageContainerBubble,
+  FlexMessageContainerCarousel,
 );
 
-export const LineFlexMessage = Schema.TaggedStruct("LineFlexMessage", {
+export const FlexMessage = Schema.TaggedStruct("LineFlexMessage", {
   type: Schema.Literal("flex"),
   altText: Schema.NonEmptyTrimmedString,
-  contents: LineFlexMessageContainer,
+  contents: FlexMessageContainer,
 });
 
-export type LineFlexMessageType = typeof LineFlexMessage.Type;
+export type FlexMessageType = typeof FlexMessage.Type;
 
 // Compile-time type checks to ensure compatibility with LINE SDK
-const _assert: Line.messagingApi.FlexMessage = {} as LineFlexMessageType;
+const _assert: Line.messagingApi.FlexMessage = {} as FlexMessageType;
