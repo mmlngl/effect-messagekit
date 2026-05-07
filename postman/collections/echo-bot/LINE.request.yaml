@@ -1,5 +1,5 @@
 $kind: http-request
-name: echo
+name: LINE
 url: http://localhost:8787/echo/line
 method: POST
 body:

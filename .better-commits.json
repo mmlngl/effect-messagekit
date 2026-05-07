@@ -101,6 +101,10 @@
         "label": "provider-line"
       },
       {
+        "value": "provider-console",
+        "label": "provider-console"
+      },
+      {
         "value": "",
         "label": "none"
       }

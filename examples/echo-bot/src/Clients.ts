@@ -1,8 +1,11 @@
+import * as Console from "@mmlngl/effect-messagekit-provider-console";
 import * as Line from "@mmlngl/effect-messagekit-provider-line";
 import * as Layer from "effect/Layer";
 
-const lineClientLayer = Line.Client.LineClient.layer.pipe(
+const LineClientLayer = Line.Client.LineClient.layer.pipe(
   Layer.provide(Line.Config.LineConfig.layerFromEnv),
 );
 
-export const clientsLayer = Layer.mergeAll(lineClientLayer);
+const ConsoleClientLayer = Console.Client.ConsoleClient.layer;
+
+export const ClientsLayer = Layer.mergeAll(LineClientLayer, ConsoleClientLayer);

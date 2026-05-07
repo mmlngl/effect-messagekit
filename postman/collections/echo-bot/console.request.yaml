@@ -1,0 +1,11 @@
+$kind: http-request
+name: console
+url: http://localhost:8787/echo/console
+method: POST
+body:
+  type: json
+  content: |-
+    {
+        "msg": "dog"
+    }
+order: 1647435218102722

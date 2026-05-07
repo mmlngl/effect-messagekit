@@ -12,11 +12,11 @@ Dotenv.config();
 
 const ApiLayer = P.HttpApiBuilder.api(Api.ServerApi)
   .pipe(Layer.provide([Handlers.EchoGroupHandlers]))
-  .pipe(Layer.provide(Clients.clientsLayer));
+  .pipe(Layer.provide(Clients.ClientsLayer));
 
 const middlewareLayer = Layer.mergeAll(
   Line.Middleware.LineWebhookAuthorization.layer.pipe(
-    Layer.provide(Clients.clientsLayer),
+    Layer.provide(Clients.ClientsLayer),
   ),
 );
 

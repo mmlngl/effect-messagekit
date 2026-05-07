@@ -13,4 +13,9 @@ export class EchoGroup extends P.HttpApiGroup.make("echo")
       .addSuccess(Payload)
       .addError(Schema.String),
   )
+  .add(
+    P.HttpApiEndpoint.post("console", "/console")
+      .addSuccess(Payload)
+      .addError(Schema.String),
+  )
   .prefix("/echo") {}

@@ -1,0 +1,53 @@
+{
+  "name": "@mmlngl/effect-messagekit-provider-console",
+  "version": "0.0.1",
+  "type": "module",
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mmlngl/effect-messagekit.git",
+    "directory": "packages/provider-console"
+  },
+  "scripts": {
+    "build": "tsup",
+    "check": "biome check .",
+    "check:write": "biome check --write .",
+    "clean": "rm -rf dist coverage",
+    "dev": "tsup --watch",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
+    "lint": "biome lint .",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@mmlngl/effect-messagekit-core": "workspace:^"
+  },
+  "peerDependencies": {
+    "@effect/platform": "^0.96.1",
+    "effect": "^3.21.0"
+  },
+  "devDependencies": {
+    "@effect/platform": "^0.96.1",
+    "effect": "^3.21.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=20.0"
+  }
+}

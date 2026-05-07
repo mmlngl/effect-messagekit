@@ -99,6 +99,9 @@ importers:
       '@mmlngl/effect-messagekit-core':
         specifier: workspace:^
         version: link:../../packages/core
+      '@mmlngl/effect-messagekit-provider-console':
+        specifier: workspace:^
+        version: link:../../packages/provider-console
       '@mmlngl/effect-messagekit-provider-line':
         specifier: workspace:^
         version: link:../../packages/provider-line
@@ -119,6 +122,19 @@ importers:
         specifier: ^0.17.2
         version: 0.17.2(effect@3.21.2)
     devDependencies:
+      effect:
+        specifier: ^3.21.0
+        version: 3.21.2
+
+  packages/provider-console:
+    dependencies:
+      '@mmlngl/effect-messagekit-core':
+        specifier: workspace:^
+        version: link:../core
+    devDependencies:
+      '@effect/platform':
+        specifier: ^0.96.1
+        version: 0.96.1(effect@3.21.2)
       effect:
         specifier: ^3.21.0
         version: 3.21.2
