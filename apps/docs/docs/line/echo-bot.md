@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Echo Bot
 
-Complete reference implementation for a LINE webhook bot. Handles incoming messages, validates signatures, and replies using a presenter.
+Complete reference implementation for a LINE webhook bot. Handles incoming messages, validates signatures, and sends replies.
 
 Full source: [`examples/echo-bot`](https://github.com/mmlngl/effect-messagekit/tree/main/examples/echo-bot)
 
@@ -22,14 +22,13 @@ LINE_CHANNEL_SECRET=your_channel_secret
 
 ## Define the API Group
 
-`Group.ts` declares the endpoint and attaches the LINE signature middleware:
+`Group.ts` declares the endpoints and attaches the LINE signature middleware:
 
 ```typescript
 import * as P from "@effect/platform";
 import * as Line from "@mmlngl/effect-messagekit-provider-line";
 import * as Schema from "effect/Schema";
 
-// Response schema for the webhook endpoint
 export const Payload = Schema.Struct({
   msg: Schema.NonEmptyTrimmedString,
 });
@@ -37,8 +36,12 @@ export const Payload = Schema.Struct({
 export class EchoGroup extends P.HttpApiGroup.make("echo")
   .add(
     P.HttpApiEndpoint.post("line", "/line")
-      // Attach LINE signature validation middleware
       .middleware(Line.Middleware.LineWebhookAuthorization)
+      .addSuccess(Payload)
+      .addError(Schema.String),
+  )
+  .add(
+    P.HttpApiEndpoint.post("console", "/console")
       .addSuccess(Payload)
       .addError(Schema.String),
   )
@@ -47,28 +50,28 @@ export class EchoGroup extends P.HttpApiGroup.make("echo")
 
 ## Build the Client Layer
 
-`Clients.ts` constructs the LINE client from environment variables:
+`Clients.ts` constructs the LINE and console clients:
 
 ```typescript
+import * as Console from "@mmlngl/effect-messagekit-provider-console";
 import * as Line from "@mmlngl/effect-messagekit-provider-line";
 import * as Layer from "effect/Layer";
 
-const lineClientLayer = Line.Client.LineClient.layer.pipe(
-  Layer.provide(Line.Config.LineConfig.layerFromEnv),
-);
+const LineClientLayer = Line.Client.layer;
+const ConsoleClientLayer = Console.Client.layer;
 
-export const clientsLayer = Layer.mergeAll(lineClientLayer);
+export const ClientsLayer = Layer.mergeAll(LineClientLayer, ConsoleClientLayer);
 ```
 
-`LineConfig.layerFromEnv` reads `LINE_CHANNEL_ACCESS_TOKEN` and `LINE_CHANNEL_SECRET` from the process environment via Effect's `Config` module.
+`Line.Client.layer` reads `LINE_CHANNEL_ACCESS_TOKEN` and `LINE_CHANNEL_SECRET` from the environment automatically.
 
 ## Write the Handler
 
-`Handlers.ts` contains the business logic:
+`Handlers.ts` contains the business logic. Build a message array and pass it to `client.send()`:
 
 ```typescript
 import * as P from "@effect/platform";
-import * as Core from "@mmlngl/effect-messagekit-core";
+import * as Console from "@mmlngl/effect-messagekit-provider-console";
 import * as Line from "@mmlngl/effect-messagekit-provider-line";
 import * as Effect from "effect/Effect";
 import * as Schema from "effect/Schema";
@@ -79,69 +82,91 @@ export const EchoGroupHandlers = P.HttpApiBuilder.group(
   Api.ServerApi,
   "echo",
   (handlers) =>
-    handlers.handle("line", ({ request }) =>
-      Effect.gen(function* () {
-        // 1. Parse the request body
-        const body = yield* request.json.pipe(
-          Effect.mapError((cause) => cause.toString()),
-        );
+    handlers
+      .handle("line", ({ request }) =>
+        Effect.gen(function* () {
+          const body = yield* request.json.pipe(
+            Effect.mapError((cause) => cause.toString()),
+          );
 
-        // 2. Decode into the expected schema
-        const payload = yield* Schema.decodeUnknown(Payload)(body).pipe(
-          Effect.mapError((cause) => cause.toString()),
-        );
+          const payload = yield* Schema.decodeUnknown(Payload)(body).pipe(
+            Effect.mapError((cause) => cause.toString()),
+          );
 
-        // 3. Build an outbound message
-        const dummyMessage = Core.Domain.Messages.OutboundMessage.make({
-          id: Core.Domain.Messages.MessageIdentifier.make(
-            "d2109887-0589-4ead-99bb-d938f8dff72d",
-          ),
-          incomingMessageId: Core.Domain.Messages.MessageIdentifier.make(
-            "35f1e4a9-c52d-451a-8d22-d2470cbdba09",
-          ),
-          provider: Core.Domain.Providers.ProviderIdentifier.make("LINE"),
-          recipient: Core.Domain.User.UserIdentifier.make("user-1"),
-          timestamp: new Date(),
-        });
+          const client = yield* Line.Client.LineClient;
 
-        // 4. Choose a presenter and send via the LINE client
-        const presenter = Line.Messages.TextMessage.presenter;
-        const client = yield* Line.Client.LineClient;
+          const messages = [
+            Line.Messages.TextMessage.LineTextMessage.make({
+              type: "text",
+              text: payload.msg,
+            }),
+          ];
 
-        yield* client.presentMessages([dummyMessage], presenter).pipe(
-          Effect.tap(() => Effect.log("messages presented")),
-          Effect.mapError((cause) => cause.toString()),
-        );
+          yield* client.send(userId, messages).pipe(
+            Effect.tap(() => Effect.log("message sent")),
+          );
 
-        return Payload.make({ msg: payload.msg });
-      }),
-    ),
+          return Payload.make({ msg: payload.msg });
+        }),
+      )
+      .handle("console", ({ request }) =>
+        Effect.gen(function* () {
+          const body = yield* request.json.pipe(
+            Effect.mapError((cause) => cause.toString()),
+          );
+
+          const payload = yield* Schema.decodeUnknown(Payload)(body).pipe(
+            Effect.mapError((cause) => cause.toString()),
+          );
+
+          const client = yield* Console.Client.ConsoleClient;
+
+          const messages = [
+            Console.Messages.JsonMessage.ConsoleJsonMessage.make({
+              contents: payload.msg,
+            }),
+          ];
+
+          yield* client.send(userId, messages).pipe(
+            Effect.tap(() => Effect.log("message sent")),
+          );
+
+          return Payload.make({ msg: payload.msg });
+        }),
+      ),
 );
 ```
 
 ### Signature Validation
 
-By the time the handler runs, `LineWebhookAuthorization` has already validated the `X-Line-Signature` header. No manual verification is needed inside the handler.
+`LineWebhookAuthorization` runs before the handler. It reads the `X-Line-Signature` header, validates it against the raw request body using the Channel Secret, and rejects invalid requests with HTTP 401 — no handler code needed.
 
 ```
 Request arrives
-  → LineWebhookAuthorization validates signature
-  → Reads raw request body
-  → Calls validateSignature(body, channelSecret, signature)
-  → Invalid → fails with LineSignatureError (HTTP 401)
+  → LineWebhookAuthorization validates X-Line-Signature
+  → Invalid → LineSignatureError (HTTP 401)
   → Valid   → handler proceeds
 ```
 
-### Replying with a Presenter
+### Sending Messages
 
-Presenters convert domain `OutboundMessage` objects into platform-specific message payloads. `Line.Messages.TextMessage.presenter` builds `LineTextMessage` objects that the client sends via the LINE Messaging API:
+`client.send(recipient, messages)` takes a recipient ID and an array of typed message objects. Swap the message type without touching anything else:
 
 ```typescript
-const presenter = Line.Messages.TextMessage.presenter;
-yield * client.presentMessages([outboundMessage], presenter);
+// Text
+Line.Messages.TextMessage.LineTextMessage.make({ type: "text", text: "hello" })
+
+// Flex
+Line.Messages.FlexMessage.LineFlexMessage.make({ type: "flex", altText: "Card", contents: { ... } })
 ```
 
-The presenter is a pure function — swap it for `Line.Messages.FlexMessage.presenter` or a custom presenter without touching the handler structure.
+For local development without a real LINE channel, swap the client layer for the console provider — same `send` call, output goes to stdout:
+
+```typescript
+// Swap Layer.provide(Line.Client.layer) → Layer.provide(Console.Client.layer)
+// Then in the handler:
+Console.Messages.JsonMessage.ConsoleJsonMessage.make({ contents: payload.msg })
+```
 
 ## Wire the Server
 
@@ -160,22 +185,18 @@ import * as Handlers from "./Handlers";
 
 Dotenv.config();
 
-// Build the API layer, providing handler and client dependencies
 const ApiLayer = P.HttpApiBuilder.api(Api.ServerApi)
   .pipe(Layer.provide([Handlers.EchoGroupHandlers]))
-  .pipe(Layer.provide(Clients.clientsLayer));
+  .pipe(Layer.provide(Clients.ClientsLayer));
 
-// Build the middleware layer
 const middlewareLayer = Layer.mergeAll(
   Line.Middleware.LineWebhookAuthorization.layer.pipe(
-    Layer.provide(Clients.clientsLayer),
+    Layer.provide(Clients.ClientsLayer),
   ),
 );
 
-// Merge API and middleware
 const builtLayer = Layer.provide(ApiLayer, middlewareLayer);
 
-// Serve on port 8787
 const HttpLive = P.HttpApiBuilder.serve(P.HttpMiddleware.logger).pipe(
   Layer.provide(builtLayer),
   P.HttpServer.withLogAddress,
@@ -191,10 +212,15 @@ N.NodeRuntime.runMain(Layer.launch(HttpLive));
 pnpm dev
 # Server starts at http://localhost:8787
 
-# Test the endpoint (signature check disabled via env flag)
+# Test the LINE endpoint (with signature check disabled via env flag)
 curl -X POST http://localhost:8787/echo/line \
   -H "Content-Type: application/json" \
   -H "X-Line-Signature: dummy" \
+  -d '{"msg": "hello"}'
+
+# Test the console endpoint
+curl -X POST http://localhost:8787/echo/console \
+  -H "Content-Type: application/json" \
   -d '{"msg": "hello"}'
 ```
 
