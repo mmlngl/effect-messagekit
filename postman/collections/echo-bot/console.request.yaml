@@ -6,6 +6,6 @@ body:
   type: json
   content: |-
     {
-        "msg": "dog"
+        "msg": "ping"
     }
 order: 1647435218102722

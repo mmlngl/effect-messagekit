@@ -1,20 +1,23 @@
 {
   "name": "@mmlngl/effect-messagekit-core",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "sideEffects": false,
   "files": [
     "dist"
   ],
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.js"
+    "./domain": {
+      "types": "./dist/domain/index.d.ts",
+      "import": "./dist/domain/index.js",
+      "require": "./dist/domain/index.js"
+    },
+    "./infra": {
+      "types": "./dist/infra/index.d.ts",
+      "import": "./dist/infra/index.js",
+      "require": "./dist/infra/index.js"
     }
   },
-  "types": "./dist/index.d.ts",
-  "main": "./dist/index.js",
   "license": "MIT",
   "repository": {
     "type": "git",

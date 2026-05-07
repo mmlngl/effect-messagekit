@@ -1,4 +1,5 @@
 import * as P from "@effect/platform";
+import { LINE_SIGNATURE_HTTP_HEADER_NAME } from "@line/bot-sdk";
 import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
 import * as Client from "./Client";
@@ -11,7 +12,7 @@ export class LineWebhookAuthorization extends P.HttpApiMiddleware.Tag<LineWebhoo
     security: {
       signature: P.HttpApiSecurity.apiKey({
         in: "header",
-        key: "X-Line-Signature",
+        key: LINE_SIGNATURE_HTTP_HEADER_NAME,
       }),
     },
   },
@@ -38,6 +39,9 @@ export class LineWebhookAuthorization extends P.HttpApiMiddleware.Tag<LineWebhoo
                       new Errors.LineSignatureError({ cause: "Invalid token" }),
                     ),
                 }),
+              ),
+              Effect.mapError(
+                (cause) => new Errors.LineSignatureError({ cause }),
               ),
             );
           }),

@@ -7,3 +7,5 @@ export const UserIdentifier = Schema.NonEmptyTrimmedString.pipe(
     description: "Unique identifier for a user",
   }),
 );
+
+export type UserIdentifierType = typeof UserIdentifier.Type;

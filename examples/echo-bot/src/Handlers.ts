@@ -1,11 +1,13 @@
 import * as P from "@effect/platform";
-import * as Core from "@mmlngl/effect-messagekit-core";
+import * as Core from "@mmlngl/effect-messagekit-core/domain";
 import * as Console from "@mmlngl/effect-messagekit-provider-console";
 import * as Line from "@mmlngl/effect-messagekit-provider-line";
 import * as Effect from "effect/Effect";
 import * as Schema from "effect/Schema";
 import * as Api from "./Api";
 import { Payload } from "./Group";
+
+const userId = Core.User.UserIdentifier.make("user-id");
 
 export const EchoGroupHandlers = P.HttpApiBuilder.group(
   Api.ServerApi,
@@ -22,29 +24,21 @@ export const EchoGroupHandlers = P.HttpApiBuilder.group(
             Effect.mapError((cause) => cause.toString()),
           );
 
-          const presenter = Line.Messages.TextMessage.presenter;
           const client = yield* Line.Client.LineClient;
 
-          const dummyMessage = Core.Domain.Messages.OutboundMessage.make({
-            id: Core.Domain.Messages.MessageIdentifier.make(
-              "d2109887-0589-4ead-99bb-d938f8dff72d",
-            ),
-            incomingMessageId: Core.Domain.Messages.MessageIdentifier.make(
-              "35f1e4a9-c52d-451a-8d22-d2470cbdba09",
-            ),
-            provider: Core.Domain.Providers.ProviderIdentifier.make("LINE"),
-            recipient: Core.Domain.User.UserIdentifier.make("user-1"),
-            timestamp: new Date(),
-          });
+          const messages = [
+            Line.Messages.TextMessage.LineTextMessage.make({
+              type: "text",
+              text: payload.msg,
+            }),
+          ];
 
-          yield* client.presentMessages([dummyMessage], presenter).pipe(
-            Effect.tap(() => Effect.log("messages presented")),
+          yield* client.send(userId, messages).pipe(
             Effect.mapError((cause) => cause.toString()),
+            Effect.tap(() => Effect.log("message sent")),
           );
 
-          return Payload.make({
-            msg: payload.msg,
-          });
+          return Payload.make({ msg: payload.msg });
         }),
       )
       .handle("console", ({ request }) =>
@@ -57,29 +51,20 @@ export const EchoGroupHandlers = P.HttpApiBuilder.group(
             Effect.mapError((cause) => cause.toString()),
           );
 
-          const presenter = Console.Messages.MarkdownMessage.presenter;
           const client = yield* Console.Client.ConsoleClient;
 
-          const dummyMessage = Core.Domain.Messages.OutboundMessage.make({
-            id: Core.Domain.Messages.MessageIdentifier.make(
-              "d2109887-0589-4ead-99bb-d938f8dff72d",
-            ),
-            incomingMessageId: Core.Domain.Messages.MessageIdentifier.make(
-              "35f1e4a9-c52d-451a-8d22-d2470cbdba09",
-            ),
-            provider: Core.Domain.Providers.ProviderIdentifier.make("LINE"),
-            recipient: Core.Domain.User.UserIdentifier.make("user-1"),
-            timestamp: new Date(),
-          });
+          const messages = [
+            Console.Messages.JsonMessage.ConsoleJsonMessage.make({
+              contents: payload.msg,
+            }),
+          ];
 
-          yield* client.presentMessages([dummyMessage], presenter).pipe(
-            Effect.tap(() => Effect.log("messages presented")),
+          yield* client.send(userId, messages).pipe(
             Effect.mapError((cause) => cause.toString()),
+            Effect.tap(() => Effect.log("message sent")),
           );
 
-          return Payload.make({
-            msg: payload.msg,
-          });
+          return Payload.make({ msg: payload.msg });
         }),
       ),
 );
