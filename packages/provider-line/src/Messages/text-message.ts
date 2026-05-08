@@ -1,10 +1,11 @@
 import type * as Line from "@line/bot-sdk";
 import * as Schema from "effect/Schema";
+import * as Domain from "../Domain";
 
 export const TextMessage = Schema.TaggedStruct("LineTextMessage", {
   type: Schema.Literal("text"),
   text: Schema.NonEmptyTrimmedString,
-  quoteToken: Schema.optionalWith(Schema.NonEmptyTrimmedString, {
+  quoteToken: Schema.optionalWith(Domain.QuoteToken, {
     exact: true,
   }),
 });

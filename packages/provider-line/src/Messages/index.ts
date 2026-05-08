@@ -1,3 +1,4 @@
+import * as Core from "@mmlngl/effect-messagekit-core/domain";
 import * as Schema from "effect/Schema";
 import { FlexMessage } from "./flex-message";
 import { ImageMessage } from "./image-message";
@@ -10,6 +11,11 @@ export const AnyLineMessage = Schema.Union(
 );
 
 export type AnyLineMessage = typeof AnyLineMessage.Type;
+
+export const AnyOutboundLineMessage =
+  Core.Messages.buildOutboundMessage(AnyLineMessage);
+
+export type AnyOutboundLineMessageType = typeof AnyOutboundLineMessage.Type;
 
 export * from "./flex-message";
 export * from "./image-message";

@@ -1,0 +1,25 @@
+{
+  "name": "line-webhook",
+  "version": "1.0.0",
+  "private": true,
+  "description": "",
+  "scripts": {
+    "dev": "tsx watch src/main.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "packageManager": "pnpm@10.15.0",
+  "dependencies": {
+    "@dotenvx/dotenvx": "^1.65.0",
+    "@mmlngl/effect-messagekit-core": "workspace:^",
+    "@mmlngl/effect-messagekit-provider-line": "workspace:^",
+    "@effect/platform": "^0.96.1",
+    "@effect/platform-node": "^0.106.0",
+    "effect": "^3.21.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.3"
+  }
+}
