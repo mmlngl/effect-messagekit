@@ -1,0 +1,17 @@
+$kind: http-request
+name: console
+url: http://localhost:8787/webhooks/console
+method: POST
+body:
+  type: json
+  content: |-
+    {
+        "events": [
+            {
+                "timestamp": 12312312,
+                "userId": "user-123",
+                "contents": "Check the console…"
+            }
+        ]
+    }
+order: 1778243788691

@@ -1,5 +1,5 @@
 {
-  "name": "line-webhook",
+  "name": "webhook-handlers",
   "version": "1.0.0",
   "private": true,
   "description": "",
@@ -13,6 +13,7 @@
   "dependencies": {
     "@dotenvx/dotenvx": "^1.65.0",
     "@mmlngl/effect-messagekit-core": "workspace:^",
+    "@mmlngl/effect-messagekit-provider-console": "workspace:^",
     "@mmlngl/effect-messagekit-provider-line": "workspace:^",
     "@effect/platform": "^0.96.1",
     "@effect/platform-node": "^0.106.0",
